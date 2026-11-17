@@ -1,0 +1,17 @@
+{
+  "site_title": "古籍家谱电子书目录",
+  "site_subtitle": "收录 6.5 万部历代族谱宗谱 PDF 电子版 · 统一 ¥9.9/部 · 微信发网盘链接",
+  "announcement": "全馆古籍家谱电子版 ¥9.9 / 部 · 复制编号加微信发百度网盘链接",
+  "default_price": 9.9,
+  "show_price": true,
+  "bundle_tip": "电子书 ¥9.9/部 · 满 3 部 ¥25 · 百度网盘发货",
+  "wechat": {
+    "mode": "both",
+    "wechat_id": "请在此填写你的微信号",
+    "wechat_name": "藏谱书斋掌柜",
+    "qr_image": "./assets/wechat-qr.svg",
+    "kf_url": "",
+    "kf_button_text": "💬 跳转微信客服",
+    "work_time": "每日 08:30 - 23:30 在线发货"
+  }
+}

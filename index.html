@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>中华古籍家谱数字藏书馆 — 6.5万部历代族谱宗谱查询·姓氏源流字辈堂号总库</title>
+  <meta name="description" content="收录全国 65,744 部历代珍稀古籍家谱、族谱、宗谱、家乘高清电子原档，涵盖 600 个中华姓氏源流、郡望堂号、字辈排行与湖广填四川、洪洞大槐树、江西填湖广迁徙文献，全场普惠 ¥9.9/部微信秒发。" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <!-- 顶部低调简洁导航栏 -->
+  <nav class="sub-topnav">
+    <div class="sub-topnav-inner">
+      <a href="./index.html" class="sub-brand" id="navBrandText">古籍家谱电子书目录</a>
+      <div class="sub-links">
+        <a href="./index.html">目录检索</a>
+        <a href="./surnames/index.html">百家姓目录</a>
+        <a href="./regions/index.html">分省目录</a>
+        <a href="./articles/index.html">寻根资料</a>
+        <a href="#bundleSection">打包说明</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 紧凑低调版书目头部 + 窄版三项检索栏 -->
+  <header class="hero hero-lowkey">
+    <div class="hero-inner">
+      <h1 id="siteTitle" class="lowkey-title">古籍家谱电子书目录</h1>
+      <p id="siteSubtitle" class="lowkey-sub">
+        收录 65,744 部历代族谱宗谱 PDF 电子版 · 统一 ¥9.9/部 · 复制编号加微信发网盘链接
+      </p>
+
+      <!-- 窄版极简检索条：只放【姓氏(必填) + 省(可选) + 地区(可选) + 查询】 -->
+      <div class="slim-search-bar" id="proSearchConsole">
+        <div class="slim-cell surname-cell" id="surnameFieldWrap">
+          <label for="surnameInput" class="slim-lbl">姓氏 <em class="req-dot">*</em></label>
+          <input id="surnameInput" type="text" autocomplete="off" placeholder="输入姓氏(必填)" />
+          <span id="surnameHitBadge" class="surname-hit-badge" style="display:none;"></span>
+        </div>
+
+        <div class="slim-divider"></div>
+
+        <div class="slim-cell select-cell">
+          <label for="selProv" class="slim-lbl">省份</label>
+          <select id="selProv">
+            <option value="">不限省份</option>
+          </select>
+        </div>
+
+        <div class="slim-divider"></div>
+
+        <div class="slim-cell select-cell">
+          <label for="selRegion" class="slim-lbl">地区</label>
+          <select id="selRegion">
+            <option value="">不限地区</option>
+          </select>
+        </div>
+
+        <button type="button" id="resetConsoleBtn" class="slim-reset-btn" style="display:none;" title="清空重选">重置</button>
+        <button type="button" id="qBtn" class="slim-submit-btn">查家谱</button>
+      </div>
+
+      <div id="surnameReqTip" class="surname-req-tip" style="display:none;">
+        请先输入姓氏（姓氏为必选项，省份与地区可不选）
+      </div>
+    </div>
+  </header>
+
+  <main class="main-wrap">
+    <!-- 常见姓氏直接点选栏 -->
+    <section class="box-card compact-surname-box">
+      <div class="sec-header" style="margin-bottom:8px;">
+        <div class="sec-title" style="font-size:14px;">
+          <span>常见姓氏直选</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="clearFilterBtn" class="ghost-btn" style="display:none;">✕ 清空条件</button>
+          <button id="toggleAzBtn" class="ghost-btn">全部 600 姓 (A-Z)</button>
+          <a href="./surnames/index.html" class="ghost-btn" style="text-decoration:none;">姓氏总表 →</a>
+        </div>
+      </div>
+
+      <div id="topSurnameList" class="pill-list"></div>
+
+      <div id="azDrawer" class="az-drawer" style="display:none;">
+        <div id="azTabs" class="az-tabs"></div>
+        <div id="azSurnameList" class="pill-list"></div>
+      </div>
+    </section>
+
+    <!-- 选中姓氏后低调展示：本姓源流简介 -->
+    <section id="surnameLoreBox" class="lore-hero-card lore-compact" style="display:none;"></section>
+
+    <!-- 剩下的分类（堂号、谱书类型等）作为可直接点击的筛选标签 -->
+    <section id="facetPanel" class="facet-panel" style="display:none;"></section>
+
+    <!-- 堂号内页核验提示栏 -->
+    <div id="hallAdvisorBanner" class="hall-advisor" style="display:none;"></div>
+
+    <!-- 结果状态与页内小筛选/排序栏 -->
+    <div class="toolbar-row">
+      <div id="resultStatus" style="font-size:13.5px;color:var(--ink-mid);">正在加载书目…</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input id="qInput" type="search" class="mini-kw-input" placeholder="结果内搜词（选填）" />
+        <select id="sortSelect" class="filter-select" title="调整目录排序方式">
+          <option value="default">默认排序</option>
+          <option value="files_desc">册数从多到少</option>
+          <option value="title_asc">按书名音序</option>
+        </select>
+        <button id="shareLinkBtn" class="ghost-btn" title="复制当前书目链接">
+          复制书目链接
+        </button>
+      </div>
+    </div>
+
+    <!-- 家谱卡片列表 -->
+    <section id="bookGrid" class="book-grid"></section>
+
+    <!-- 分页导航 -->
+    <div class="pager-bar">
+      <button id="prevBtn" class="ghost-btn">← 上一页</button>
+      <span id="pageLabel" style="font-size:13.5px;color:var(--ink-mid);">1 / 1</span>
+      <button id="nextBtn" class="ghost-btn">下一页 →</button>
+    </div>
+
+    <!-- 低调诚实的打包优惠与购书说明卡片 -->
+    <section id="bundleSection" class="box-card bundle-note-card">
+      <div class="bundle-note-head">
+        <div>
+          <h2 style="font-size:16px;color:var(--ink-dark);margin-bottom:3px;">📦 电子书定价与同县/同姓打包说明</h2>
+          <p style="font-size:12.5px;color:var(--ink-light);">自助目录选书 · 百度网盘发货 · 永久保存</p>
+        </div>
+        <button type="button" id="bundleAskBtn" class="btn-wx" style="padding:8px 16px;font-size:13.5px;border-radius:7px;">
+          微信咨询打包优惠
+        </button>
+      </div>
+      <div class="bundle-note-grid">
+        <div class="bundle-note-item">
+          <strong>1. 单本自助：¥9.9 / 部</strong>
+          <p>整部家谱全卷册总价（无论一部含几册或上千页扫描图均为 ¥9.9）。点击书目卡片「微信获取」复制编号发给掌柜，秒发百度网盘链接。</p>
+        </div>
+        <div class="bundle-note-item">
+          <strong>2. 多本与同县打包：任选 3 部 ¥25</strong>
+          <p>不确定同县几部老谱里哪一部有自家支系？可点「+ 选书」满 3 部自动享 ¥25 打包价，或加微信将同县/同姓全套打包拷回，发家族群由长辈自行翻阅核对最稳妥。</p>
+        </div>
+        <div class="bundle-note-item">
+          <strong>3. 购前须知（不含代查内页）</strong>
+          <p>馆藏均为明清民国古籍原件扫描电子书（竖排繁体 PDF / 高清图片），按书目编号自助调阅发货，<strong>不提供人工逐页代查人名、村名或字辈服务</strong>。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 视觉信任背书：古籍真谱内页展示（¥9.9 到底包含什么？） -->
+    <section class="box-card">
+      <div class="sec-header" style="margin-bottom:4px;">
+        <div class="sec-title">📜 古籍家谱原档内页示例 · ¥9.9 调阅后您将拿到什么？</div>
+        <span style="font-size:12px;color:var(--ink-light);">原谱高清扫描 PDF / 图像包 · 手机电脑均可无损放大核对</span>
+      </div>
+      <div class="folio-grid">
+        <div class="folio-card">
+          <div class="folio-leaf">
+            <div class="folio-col title-col">重修族譜源流總序</div>
+            <div class="folio-col">粵稽吾族肇自潁川唐宋以來世居江右</div>
+            <div class="folio-col">明初洪武年間始遷祖攜眷卜築斯土</div>
+            <div class="folio-col">披荊斬棘創垂堂構迄今十有八傳矣</div>
+          </div>
+          <div class="folio-caption">
+            <h4>① 历代谱序与迁徙源流考</h4>
+            <p>详载老祖宗何时、因何事、从何省何县迁来落业，是寻根认祖最权威的历史铁证。</p>
+          </div>
+        </div>
+
+        <div class="folio-card">
+          <div class="folio-leaf">
+            <div class="folio-col title-col">五服世系吊線圖</div>
+            <div class="folio-col">一世始祖諱德公━┳長房文禮公</div>
+            <div class="folio-col">　　　　　　　┗次房文義公━仁達</div>
+            <div class="folio-col">二世分派支系昭穆井然世次分明</div>
+          </div>
+          <div class="folio-caption">
+            <h4>② 欧苏体五世一抬世系图</h4>
+            <p>树状吊线清晰串起历代父子兄弟传承脉络，顺着太爷爷名讳即可往上直溯二十代。</p>
+          </div>
+        </div>
+
+        <div class="folio-card">
+          <div class="folio-leaf">
+            <div class="folio-col title-col">闔族昭穆字輩派語</div>
+            <div class="folio-col">舊派：國正天心順官清民自安</div>
+            <div class="folio-col">新續：詩書繼世遠忠厚傳家久</div>
+            <div class="folio-col">凡我同宗嗣孫命名悉依派字毋紊</div>
+          </div>
+          <div class="folio-caption">
+            <h4>③ 昭穆字辈排行与新旧派语</h4>
+            <p>完整收录老派语与续修新字辈歌诀，哪怕跨省失散百年，对上字辈即可同宗认亲。</p>
+          </div>
+        </div>
+
+        <div class="folio-card">
+          <div class="folio-leaf">
+            <div class="folio-col title-col">宗祠祭田與祖塋圖記</div>
+            <div class="folio-col">敦本堂宗祠坐壬向丙前臨玉帶水</div>
+            <div class="folio-col">一世祖考妣合葬鳳形山喝象丹鳳朝陽</div>
+            <div class="folio-col">附家訓十則：敦孝悌睦宗族重耕讀</div>
+          </div>
+          <div class="folio-caption">
+            <h4>④ 宗祠图·祖茔图与家训行传</h4>
+            <p>记录先祖生卒年月、配偶姓氏、老祠堂格局与祖坟山向碑记，极具家族珍藏价值。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 寻根迁徙文化专栏（吸流与深度留存） -->
+    <section class="box-card">
+      <div class="sec-header" style="margin-bottom:4px;">
+        <div class="sec-title">🧭 寻根问祖必读 · 中国历代大迁徙与查谱实战指南</div>
+        <a href="./articles/index.html" style="font-size:13px;color:var(--cinnabar);text-decoration:none;font-weight:600;">全部专栏文章 →</a>
+      </div>
+      <div id="homeArticlesGrid" class="topic-grid"></div>
+    </section>
+
+    <!-- 消除成交顾虑 FAQ + 分省 SEO 内链矩阵 -->
+    <section class="box-card">
+      <div class="sec-title">💡 宗亲查谱与调阅常见问题</div>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1：为什么我在上海图书馆/国图能查到名字，却看不了全文？</h4>
+          <p>公立图书馆大量馆藏受限于线下阅览权限，网上仅挂出书目卡片而不开放下载。本馆整理的 65,744 部均为实打实的<strong>馆藏级高清数字化扫描原档</strong>，无需跑外地、无需注册，微信 ¥9.9 即可拿走整部原谱。</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2：¥9.9 是一页的价格还是整部家谱的价格？怎么发货？</h4>
+          <p><strong>¥9.9 为整部家谱全卷册打包价</strong>（哪怕一部谱有 10 册、上千页高清图，也是 ¥9.9 全包）！添加掌柜微信发送编号后，通过<strong>百度网盘链接秒发</strong>，可永久保存在您自己手机或电脑上。</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3：电子版在手机上能放大看清繁体小字吗？能打印装订吗？</h4>
+          <p>全部为古籍原件高清扫描（PDF 或高清大图集），手机手指拉开即可清晰辨认每一代先祖名讳与小字行传，亦可直接拿到图文店宣纸打印、线装成册供奉留存。</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q4：我们村有很多同姓族人想一起修谱，可以按姓氏或按县批量打包吗？</h4>
+          <p>完全支持！选满 3 部即享打包优惠；若宗亲会修谱需调阅<strong>某姓全部家谱或某县全套谱牒</strong>，可直接点击右下角联系掌柜微信定制专属合集特惠价。</p>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding-top:14px;border-top:1px dashed var(--line-warm);">
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--ink-mid);">🗺️ 分省家谱馆藏直达索引（搜索引擎收录通道）：</div>
+        <div id="footerProvLinks" class="pill-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p id="footerBundleTip">单部 ¥9.9 · 选满 3 部仅 ¥25 · 拍下后百度网盘高清原档秒发</p>
+    <p style="margin-top:6px;">
+      <a href="./surnames/index.html" style="color:var(--ink-mid);">百家姓源流总目</a> ·
+      <a href="./regions/index.html" style="color:var(--ink-mid);">各省地方族谱总目</a> ·
+      <a href="./articles/index.html" style="color:var(--ink-mid);">历史迁徙寻根专栏</a> ·
+      <a href="./sitemap.xml" style="color:var(--ink-light);">网站地图(Sitemap)</a>
+    </p>
+  </footer>
+
+  <!-- 右下角常驻微信咨询悬浮按钮 -->
+  <button id="fabWechatBtn" class="fab-wx">
+    <span>💬 微信购书 / 打包</span>
+  </button>
+
+  <!-- 底部多本选谱袋 -->
+  <div id="bagBar" class="bag-bar">
+    <div style="font-size:13.5px;white-space:nowrap;">
+      已选 <strong id="bagCount" style="color:#fbbf24;">0</strong> 部 ·
+      合计 <strong id="bagPrice" style="color:#f87171;">¥0</strong>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button id="clearBagBtn" class="ghost-btn" style="padding:5px 10px;background:rgba(255,255,255,0.1);color:#ddd;border-color:rgba(255,255,255,0.2);">清空</button>
+      <button id="checkoutBagBtn" class="btn-wx" style="padding:7px 14px;border-radius:999px;">
+        💬 去微信发清单拿谱
+      </button>
+    </div>
+  </div>
+
+  <!-- 微信对接转化弹窗 -->
+  <div id="wxBackdrop" class="wx-backdrop">
+    <div class="wx-modal">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <h3 style="font-size:17px;">💬 联系微信极速调阅发货</h3>
+        <button id="closeWxModalBtn" class="ghost-btn" style="padding:3px 9px;">✕</button>
+      </div>
+
+      <div id="wxCopiedBanner" class="wx-copied-tip">
+        ✅ 已自动复制您选中的家谱编号与书名！打开微信直接「粘贴」发送给掌柜即可秒发原档。
+      </div>
+
+      <div id="wxOrderPreview" class="wx-order-box"></div>
+
+      <a id="wxKfDirectBtn" href="#" target="_blank" rel="noopener" class="wx-big-btn green" style="display:none;">
+        🚀 一键跳转微信在线客服窗口（直接粘贴发送）
+      </a>
+
+      <div id="wxPersonalBlock">
+        <div class="wx-qr-wrap">
+          <img id="wxQrImg" src="./assets/wechat-qr.svg" alt="微信二维码" />
+          <div style="font-size:12px;color:var(--ink-light);">手机微信内长按识别二维码 · 电脑端请用微信扫一扫</div>
+        </div>
+
+        <div style="text-align:center;font-size:13.5px;margin-bottom:10px;">
+          掌柜微信号：<strong id="wxIdText" style="color:var(--cinnabar);font-size:15px;user-select:all;">--</strong>
+          <button id="copyWxIdOnlyBtn" class="ghost-btn" style="padding:2px 8px;margin-left:6px;font-size:12px;">复制微信号</button>
+        </div>
+
+        <button id="openWeixinAppBtn" class="wx-big-btn green">
+          📲 复制微信号并唤醒打开微信 App
+        </button>
+      </div>
+
+      <button id="copyInquiryAgainBtn" class="wx-big-btn dark">
+        📋 重新复制查谱书名与编号信息
+      </button>
+
+      <div id="wxWorkTime" style="text-align:center;font-size:12px;color:var(--ink-light);margin-top:4px;"></div>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
