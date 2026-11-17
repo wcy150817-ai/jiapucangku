@@ -90,6 +90,7 @@
     document.getElementById("subWxPreview").textContent = msg;
     document.getElementById("subWxId").textContent = wx.wechat_id || "未设置";
     document.getElementById("subQrImg").src = qrUrl;
+    document.getElementById("subQrImg").parentElement.style.display = /wechat-qr\.svg/.test(qrRaw) ? "none" : "";
 
     const kfBtn = document.getElementById("subKfBtn");
     const pBox = document.getElementById("subPersonalBox");

@@ -757,6 +757,7 @@
     $("wxOrderPreview").textContent = inquiryText;
     $("wxIdText").textContent = wxId;
     $("wxQrImg").src = wx.qr_image || "./assets/wechat-qr.svg";
+    $("wxQrImg").parentElement.style.display = (!wx.qr_image || /wechat-qr\.svg/.test(wx.qr_image)) ? "none" : "";
     $("wxWorkTime").textContent = wx.work_time || "";
 
     const kfBtn = $("wxKfDirectBtn");
